@@ -46,6 +46,11 @@ public class EmployeeController {
         return employeeService.uploadEmployeePhoto(id, file);
     }
 
+    @GetMapping("/photo/{fileName:.+}")
+    public ResponseEntity<byte[]> getEmployeePhoto(@PathVariable String fileName) {
+        return employeeService.getEmployeePhoto(fileName);
+    }
+
 
 
 }

@@ -16,5 +16,5 @@ public class Employee {
     @Column(unique = true)
     private String email;
     private String department;
-    private String photo;
+    private String photoPath;
 }

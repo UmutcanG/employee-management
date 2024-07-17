@@ -1,5 +1,6 @@
 package com.example.employeemanagement.filestorage;
 
+import jakarta.annotation.PostConstruct;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
@@ -14,6 +15,15 @@ import java.nio.file.StandardCopyOption;
 public class FileStorageService {
     @Value("${file.upload-dir}")
     private String uploadDir;
+
+    @PostConstruct
+    public void init() {
+        try {
+            Files.createDirectories(Paths.get(uploadDir));
+        } catch (IOException e) {
+            throw new RuntimeException("Could not create upload directory!");
+        }
+    }
 
     public void storeFile(MultipartFile file, String fileName) throws IOException {
         Path targetLocation = Paths.get(uploadDir).resolve(fileName);

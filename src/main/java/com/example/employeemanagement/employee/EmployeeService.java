@@ -58,16 +58,33 @@ public class EmployeeService {
     }
 
     public ResponseEntity<Employee> uploadEmployeePhoto(Long id, MultipartFile file) {
-        return (ResponseEntity<Employee>) employeeRepository.findById(id).map(employee -> {
+        Optional<Employee> optionalEmployee = employeeRepository.findById(id);
+        if (optionalEmployee.isPresent()) {
+            Employee employee = optionalEmployee.get();
             String fileName = id + "_" + file.getOriginalFilename();
             try {
                 fileStorageService.storeFile(file, fileName);
-                employee.setPhoto(fileName);
+                employee.setPhotoPath(fileName);
                 employeeRepository.save(employee);
                 return new ResponseEntity<>(employee, HttpStatus.OK);
             } catch (IOException e) {
+                e.printStackTrace();
                 return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
             }
-        }).orElse(new ResponseEntity<>(HttpStatus.NOT_FOUND));
+        } else {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
+    }
+
+    public ResponseEntity<byte[]> getEmployeePhoto(String fileName) {
+        try {
+            Path file = fileStorageService.loadFile(fileName);
+            byte[] fileContent = Files.readAllBytes(file);
+            return ResponseEntity.ok().body(fileContent);
+        } catch (IOException e) {
+            e.printStackTrace();
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
     }
 }
+
