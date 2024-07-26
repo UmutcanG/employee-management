@@ -10,6 +10,7 @@ import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
+@CrossOrigin()
 @RequestMapping("api/employees")
 public class EmployeeController {
     private final EmployeeService employeeService;
